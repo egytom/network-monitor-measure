@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka/
+    registry-fetch-interval-seconds: 5
+
+logging:
+  level:
+    com.netflix.: info
+    ROOT: debug
