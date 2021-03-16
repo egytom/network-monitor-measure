@@ -17,7 +17,7 @@ public class NetworkmonitorService {
     private final ConfiguratorServiceFeignClient configuratorClient;
 
     public NetworkmonitorResponse helloWorld(NetworkmonitorDTO dto) {
-        dto.text = dto.text + " Hello " + configuratorClient.getWorld();
+        dto.text = dto.text + " Hello World"; // + configuratorClient.getWorld();
         return networkmonitorMapper.toResponse(dto);
     }
     

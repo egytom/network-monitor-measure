@@ -25,8 +25,8 @@ class NetworkmonitorServiceTest {
         ConfiguratorServiceFeignClient configuratorClient = mock(ConfiguratorServiceFeignClient.class);
         service = new NetworkmonitorService(networkmonitorMapper, configuratorClient);
 
-        when(configuratorClient.getWorld())
-                .thenReturn(WORLD);
+        /* when(configuratorClient.getWorld())
+                .thenReturn(WORLD); */
     }
 
     @Test
