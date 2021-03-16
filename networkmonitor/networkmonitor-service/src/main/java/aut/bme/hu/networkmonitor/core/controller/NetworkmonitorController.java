@@ -23,7 +23,7 @@ public class NetworkmonitorController implements INetworkmonitorController {
 
     @Override
     public NetworkmonitorResponse helloWorld(@Valid @RequestBody NetworkmonitorRequest request) {
-        log.info("-----> HelloWorld request through /networkmonitor/hello");
+        log.debug("-----> HelloWorld request through /networkmonitor/hello");
         return networkmonitorService.helloWorld(networkmonitorMapper.toDTO(request));
     }
 

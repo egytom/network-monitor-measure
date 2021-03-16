@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "configurator.dictionary")
-public class DictionaryConfig {
-    private String text;
+@ConfigurationProperties(prefix = "configurator.protocol")
+public class ProtocolConfig {
+
+    private String defaultType;
+
 }

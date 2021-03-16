@@ -1,35 +1,27 @@
 package aut.bme.hu.configurator.core.service;
 
-import aut.bme.hu.configurator.core.config.DictionaryConfig;
-import aut.bme.hu.configurator.core.mapper.ConfiguratorMapper;
-import aut.bme.hu.configurator.core.mapper.ConfiguratorMapperImpl;
+import aut.bme.hu.configurator.core.config.ProtocolConfig;
+import aut.bme.hu.configurator.core.repository.ConfigRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class ConfiguratorServiceTest {
-
-    private static final String WORLD = "World";
 
     private ConfiguratorService service;
 
     @BeforeEach
     void init() {
-        ConfiguratorMapper configuratorMapper = new ConfiguratorMapperImpl();
-        DictionaryConfig dictionaryConfig = mock(DictionaryConfig.class);
-        service = new ConfiguratorService(configuratorMapper, dictionaryConfig);
-
-        when(dictionaryConfig.getText()).thenReturn(WORLD);
+        ProtocolConfig protocolConfig = mock(ProtocolConfig.class);
+        ConfigRepository configRepository = mock(ConfigRepository.class);
+        service = new ConfiguratorService(protocolConfig, configRepository);
     }
 
     @Test
     void testGetWorld() {
-        String response = service.getWorld();
-
-        assertEquals(WORLD, response);
+        assertTrue(true);
     }
 
 }
