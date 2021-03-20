@@ -15,10 +15,14 @@ public interface ConfiguratorMapper {
 
     ComplexConfigResponse toResponse(ComplexConfigResult result);
 
-    CreateConfigMessage toDTO(CreateConfigRequest request);
+    CreateConfigMessage toMessage(CreateConfigRequest request);
 
-    UpdateConfigMessage toDTO(UpdateConfigRequest request);
+    UpdateConfigMessage toMessage(UpdateConfigRequest request);
 
-    GetConfigsByIdsMessage toDTO(GetConfigsByIdsRequest request);
+    GetConfigsByIdsMessage toMessage(GetConfigsByIdsRequest request);
+
+    Config toConfig(CreateConfigMessage message);
+
+    ComplexConfigResult toResult(Config config);
 
 }

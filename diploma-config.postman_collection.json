@@ -1,0 +1,113 @@
+{
+	"variables": [],
+	"info": {
+		"name": "diploma-config",
+		"_postman_id": "d6e9465e-a6bf-8c05-c7e5-545541fb2793",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getConfig",
+			"request": {
+				"url": "localhost:8080/configurator/configs/a409d757-d836-425e-a685-73435507de91",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "getAllConfigs",
+			"request": {
+				"url": "localhost:8080/configurator/configs",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "createConfig",
+			"request": {
+				"url": "localhost:8080/configurator/configs/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"First config\",\n\t\"category\":\"DEFAULT\",\n\t\"durationInSec\":\"60\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "updateConfig",
+			"request": {
+				"url": "localhost:8080/configurator/configs/",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":\"a409d757-d836-425e-a685-73435507de91\",\n\t\"name\":\"First config updated\",\n\t\"protocol\":\"TCP\",\n\t\"category\":\"DEFAULT\",\n\t\"durationInSec\":\"30\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "getConfigsByIds",
+			"request": {
+				"url": "localhost:8080/configurator/configs/ids",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"ids\" : [\"a409d757-d836-425e-a685-73435507de91\", \"4bd97e4f-9325-4126-af1f-303601e4e5d6\"]\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "removeConfig",
+			"request": {
+				"url": "localhost:8080/configurator/configs/a409d757-d836-425e-a685-73435507de91",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

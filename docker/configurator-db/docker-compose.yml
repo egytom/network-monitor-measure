@@ -1,0 +1,15 @@
+version: '3'
+services:
+  configuratordb:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    image: configuratordb
+    container_name: configuratordb
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: configuratordb
+      POSTGRES_DB: configuratordb
+    ports:
+      - '5432:5432'
+

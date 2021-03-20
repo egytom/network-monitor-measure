@@ -17,7 +17,6 @@ public class CreateConfigRequest {
     @Size(max = 100)
     public String name;
 
-    @NotNull
     public Protocol protocol;
 
     @NotNull

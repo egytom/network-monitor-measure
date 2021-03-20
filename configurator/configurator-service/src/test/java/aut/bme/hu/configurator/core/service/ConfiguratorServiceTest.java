@@ -1,6 +1,8 @@
 package aut.bme.hu.configurator.core.service;
 
 import aut.bme.hu.configurator.core.config.ProtocolConfig;
+import aut.bme.hu.configurator.core.mapper.ConfiguratorMapper;
+import aut.bme.hu.configurator.core.mapper.ConfiguratorMapperImpl;
 import aut.bme.hu.configurator.core.repository.ConfigRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +18,8 @@ class ConfiguratorServiceTest {
     void init() {
         ProtocolConfig protocolConfig = mock(ProtocolConfig.class);
         ConfigRepository configRepository = mock(ConfigRepository.class);
-        service = new ConfiguratorService(protocolConfig, configRepository);
+        ConfiguratorMapper configuratorMapper = new ConfiguratorMapperImpl();
+        service = new ConfiguratorService(protocolConfig, configRepository, configuratorMapper);
     }
 
     @Test

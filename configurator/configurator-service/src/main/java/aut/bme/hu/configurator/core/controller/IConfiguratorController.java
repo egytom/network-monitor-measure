@@ -2,10 +2,13 @@ package aut.bme.hu.configurator.core.controller;
 
 import aut.bme.hu.configurator.api.message.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@Validated
 @RestController
 public interface IConfiguratorController {
 
@@ -17,17 +20,17 @@ public interface IConfiguratorController {
 
     @PostMapping("/configs")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void createConfig(@RequestBody CreateConfigRequest request);
+    void createConfig(@Valid @RequestBody CreateConfigRequest request);
 
     @PutMapping("/configs")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void updateConfig(@RequestBody UpdateConfigRequest request);
+    void updateConfig(@Valid @RequestBody UpdateConfigRequest request);
 
     @DeleteMapping("/configs/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void removeConfig(@PathVariable String id);
 
     @PostMapping("/configs/ids")
-    List<ComplexConfigResponse> getConfigsByIds(@RequestBody GetConfigsByIdsRequest request);
+    List<ComplexConfigResponse> getConfigsByIds(@Valid @RequestBody GetConfigsByIdsRequest request);
 
 }

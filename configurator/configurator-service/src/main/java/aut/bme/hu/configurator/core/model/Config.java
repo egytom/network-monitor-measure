@@ -1,11 +1,10 @@
 package aut.bme.hu.configurator.core.model;
 
+import aut.bme.hu.configurator.api.message.Category;
+import aut.bme.hu.configurator.api.message.Protocol;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -25,6 +24,14 @@ public class Config {
     @Id
     private String id = UUID.randomUUID().toString();
 
-    // TODO - add missing fields
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    private Protocol protocol;
+
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
+    private int durationInSec;
 
 }

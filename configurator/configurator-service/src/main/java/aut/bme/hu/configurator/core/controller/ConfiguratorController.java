@@ -5,11 +5,12 @@ import aut.bme.hu.configurator.core.mapper.ConfiguratorMapper;
 import aut.bme.hu.configurator.core.service.ConfiguratorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.Valid;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,11 @@ public class ConfiguratorController implements IConfiguratorController {
     @Override
     public ConfigResponse getConfig(String id) {
         log.debug("-----> GET Config request through /configurator/configs/" + id);
-        return configuratorMapper.toResponse(configuratorService.getConfig());
+        try {
+            return configuratorMapper.toResponse(configuratorService.getConfig(id));
+        } catch (EntityNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Config not found.");
+        }
     }
 
     @Override
@@ -38,15 +43,19 @@ public class ConfiguratorController implements IConfiguratorController {
     }
 
     @Override
-    public void createConfig(@Valid @RequestBody CreateConfigRequest request) {
+    public void createConfig(CreateConfigRequest request) {
         log.debug("-----> POST config request through /configurator/configs/");
-        configuratorService.createConfig(configuratorMapper.toDTO(request));
+        configuratorService.createConfig(configuratorMapper.toMessage(request));
     }
 
     @Override
-    public void updateConfig(@Valid @RequestBody UpdateConfigRequest request) {
+    public void updateConfig(UpdateConfigRequest request) {
         log.debug("-----> PUT Config request through /configurator/configs/");
-        configuratorService.updateConfig(configuratorMapper.toDTO(request));
+        try {
+            configuratorService.updateConfig(configuratorMapper.toMessage(request));
+        } catch (EntityNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Config not found.");
+        }
     }
 
     @Override
@@ -56,9 +65,9 @@ public class ConfiguratorController implements IConfiguratorController {
     }
 
     @Override
-    public List<ComplexConfigResponse> getConfigsByIds(@Valid @RequestBody GetConfigsByIdsRequest request) {
+    public List<ComplexConfigResponse> getConfigsByIds(GetConfigsByIdsRequest request) {
         log.debug("-----> GET Configs by IDs request through /configurator/configs/ids");
-        return configuratorService.getConfigsByIds(configuratorMapper.toDTO(request))
+        return configuratorService.getConfigsByIds(configuratorMapper.toMessage(request))
                 .stream()
                 .map(configuratorMapper::toResponse)
                 .collect(Collectors.toList());

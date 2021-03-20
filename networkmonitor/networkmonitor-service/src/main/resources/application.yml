@@ -3,7 +3,7 @@ server:
   servlet:
     context-path: /networkmonitor
 
-simulator-service:
+networkmonitor-service:
   ribbon:
     server-list-refresh-interval: 5
 

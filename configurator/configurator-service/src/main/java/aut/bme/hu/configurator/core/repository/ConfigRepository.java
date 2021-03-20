@@ -6,7 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ConfigRepository extends JpaRepository<Config, String> {
-
-    // TODO - add missing method declarations
-
 }

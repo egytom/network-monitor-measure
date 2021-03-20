@@ -1,17 +1,16 @@
 package aut.bme.hu.configurator.core.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
-//@AllArgsConstructor
+@AllArgsConstructor
 public class GetConfigsByIdsMessage {
 
-    // TODO - add missing fields
+    private List<String> ids;
 
 }
