@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
+    registry-fetch-interval-seconds: 10
+    enabled: true
+
+logging:
+  level:
+    com.netflix.: info
+    ROOT: info

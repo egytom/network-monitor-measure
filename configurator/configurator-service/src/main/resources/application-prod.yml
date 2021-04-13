@@ -1,0 +1,57 @@
+server:
+  port: 9001
+  servlet:
+    context-path: /configurator
+
+configurator-service:
+  ribbon:
+    server-list-refresh-interval: 5
+
+logging:
+  level:
+    com.netflix.: info
+    org.apache.http: info
+    ROOT: info
+
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
+    registry-fetch-interval-seconds: 10
+    enabled: true
+
+spring:
+  application:
+    name: configurator-service
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_schema: configuratordb
+        generate_statistics: false
+        jdbc:
+          time_zone: UTC
+          lob:
+            non_contextual_creation: true
+        connection:
+          characterEncoding: utf-8
+          CharSet: utf-8
+          useUnicode: true
+    open-in-view: false
+
+  datasource:
+    username: postgres
+    password: configuratordb
+    url: jdbc:postgresql://configuratordb:5432/configuratordb
+    driver-class-name: org.postgresql.Driver
+
+  banner:
+    location: banner.txt
+
+configurator:
+  protocol:
+    defaultType: HTTP

@@ -1,0 +1,55 @@
+version: '3'
+services:
+  configuratordb:
+    image: egytom/networkmonitor-configurator-db:0.1
+    container_name: configuratordb
+    restart: unless-stopped
+    environment:
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: configuratordb
+      POSTGRES_DB: configuratordb
+    ports:
+      - 5432:5432
+
+  discovery:
+    image: egytom/networkmonitor-discovery:0.1
+    ports:
+      - 8761:8761
+
+  configurator:
+    image: egytom/networkmonitor-configurator:0.1
+    environment:
+      - JAVA_OPTS=
+        -DEUREKA_SERVER=http://discovery:8761/eureka
+        -Dspring.profiles.active=prod
+    depends_on:
+      - discovery
+      - configuratordb
+    links:
+      - discovery
+
+  monitor:
+    image: egytom/networkmonitor-monitor:0.1
+    environment:
+      - JAVA_OPTS=
+        -DEUREKA_SERVER=http://discovery:8761/eureka
+        -Dspring.profiles.active=prod
+    depends_on:
+      - discovery
+    links:
+      - discovery
+
+  gateway:
+    image: egytom/networkmonitor-gateway:0.1
+    environment:
+      - JAVA_OPTS=
+        -DEUREKA_SERVER=http://discovery:8761/eureka
+        -Dspring.profiles.active=prod
+    depends_on:
+      - discovery
+      - monitor
+      - configurator
+    links:
+      - discovery
+    ports:
+      - 8080:8080

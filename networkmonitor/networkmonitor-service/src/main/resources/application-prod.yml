@@ -1,0 +1,26 @@
+server:
+  port: 9002
+  servlet:
+    context-path: /networkmonitor
+
+networkmonitor-service:
+  ribbon:
+    server-list-refresh-interval: 5
+
+logging:
+  level:
+    com.netflix.: info
+    org.apache.http: info
+    ROOT: info
+
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
+    registry-fetch-interval-seconds: 10
+    enabled: true
+
+spring:
+  application:
+    name: networkmonitor-service
