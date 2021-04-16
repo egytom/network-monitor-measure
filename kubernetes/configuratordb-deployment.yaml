@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: configuratordb
+  name: configuratordb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: configuratordb
+  strategy: { }
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: configuratordb
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: configuratordb
+            - name: POSTGRES_PASSWORD
+              value: configuratordb
+            - name: POSTGRES_USERNAME
+              value: postgres
+          image: egytom/networkmonitor-configurator-db:0.1
+          imagePullPolicy: ""
+          name: configuratordb
+          ports:
+            - containerPort: 5432
+          resources: { }
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status: { }
