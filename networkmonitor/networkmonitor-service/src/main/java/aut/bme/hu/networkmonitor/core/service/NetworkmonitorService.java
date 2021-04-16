@@ -20,5 +20,5 @@ public class NetworkmonitorService {
         dto.text = dto.text + " Hello World"; // + configuratorClient.getWorld();
         return networkmonitorMapper.toResponse(dto);
     }
-    
+
 }

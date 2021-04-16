@@ -11,7 +11,7 @@ import java.util.List;
 public interface ConfiguratorServiceFeignClient {
 
     @GetMapping("/configurator/configs/{id}")
-    ConfigResponse getConfig(@PathVariable String id);
+    ConfigResponse getConfig(@PathVariable("id") String id);
 
     @GetMapping("/configurator/configs")
     List<ConfigResponse> getAllConfigs();
@@ -26,7 +26,7 @@ public interface ConfiguratorServiceFeignClient {
 
     @DeleteMapping("/configurator/configs/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void removeConfig(@PathVariable String id);
+    void removeConfig(@PathVariable("id") String id);
 
     @PostMapping("/configurator/configs/ids")
     List<ComplexConfigResponse> getConfigsByIds(@RequestBody GetConfigsByIdsRequest request);
