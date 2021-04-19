@@ -10,6 +10,7 @@ import java.util.List;
 
 @Validated
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
 public interface IConfiguratorController {
 
     @GetMapping("/configs/{id}")

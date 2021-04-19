@@ -4,9 +4,21 @@ server:
 spring:
   application:
     name: gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
 
 eureka:
   client:
+    registerWithEureka: true
     service-url:
       default-zone: http://localhost:8761/eureka/
     registry-fetch-interval-seconds: 5

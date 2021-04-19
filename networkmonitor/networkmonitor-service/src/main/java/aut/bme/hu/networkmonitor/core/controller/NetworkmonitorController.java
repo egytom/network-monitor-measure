@@ -7,6 +7,7 @@ import aut.bme.hu.networkmonitor.core.service.NetworkmonitorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +17,7 @@ import javax.validation.Valid;
 @Validated
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
 public class NetworkmonitorController implements INetworkmonitorController {
 
     private final NetworkmonitorService networkmonitorService;
