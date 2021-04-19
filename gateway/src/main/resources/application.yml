@@ -4,17 +4,6 @@ server:
 spring:
   application:
     name: gateway
-  cloud:
-    gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
 
 eureka:
   client:
