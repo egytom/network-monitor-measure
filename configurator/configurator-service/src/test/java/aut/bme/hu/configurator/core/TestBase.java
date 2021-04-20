@@ -1,6 +1,8 @@
 package aut.bme.hu.configurator.core;
 
+import aut.bme.hu.configurator.api.message.ComplexConfigResponse;
 import aut.bme.hu.configurator.core.dto.ComplexConfigResult;
+import aut.bme.hu.configurator.core.model.ComplexConfig;
 import aut.bme.hu.configurator.core.model.Config;
 
 import java.util.List;
@@ -29,6 +31,14 @@ public class TestBase {
             assertEquals(result.getCategory(), config.getCategory());
             assertEquals(result.getDurationInSec(), config.getDurationInSec());
             assertEquals(result.getProtocol(), config.getProtocol());
+        }
+    }
+
+    protected void assertComplexConfig(ComplexConfigResponse result, ComplexConfig complexConfig) {
+        assertEquals(result.id, complexConfig.getId());
+        assertEquals(result.configList.size(), complexConfig.getConfigIds().size());
+        for (int i = 0; i < result.configList.size() && i < complexConfig.getConfigIds().size(); i++) {
+            assertEquals(result.configList.get(i).id, complexConfig.getConfigIds().get(i));
         }
     }
 

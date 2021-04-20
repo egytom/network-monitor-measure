@@ -32,6 +32,24 @@ public interface IConfiguratorController {
     void removeConfig(@PathVariable String id);
 
     @PostMapping("/configs/ids")
-    List<ComplexConfigResponse> getConfigsByIds(@Valid @RequestBody GetConfigsByIdsRequest request);
+    List<ComplexConfigElement> getConfigsByIds(@Valid @RequestBody GetConfigsByIdsRequest request);
+
+    @GetMapping("/complex/configs/{complexId}")
+    ComplexConfigResponse getComplexConfig(@PathVariable String complexId);
+
+    @GetMapping("/complex/configs")
+    List<ComplexConfigResponse> getAllComplexConfigs();
+
+    @PostMapping("/complex/configs")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void createComplexConfig(@Valid @RequestBody CreateComplexConfigRequest request);
+
+    @PutMapping("/complex/configs")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void updateComplexConfig(@Valid @RequestBody UpdateComplexConfigRequest request);
+
+    @DeleteMapping("/complex/configs/{complexId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void removeComplexConfig(@PathVariable String complexId);
 
 }

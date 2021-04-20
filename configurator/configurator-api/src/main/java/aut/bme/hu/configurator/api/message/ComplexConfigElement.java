@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ComplexConfigResponse {
+public class ComplexConfigElement {
 
     public String id;
-    public List<ComplexConfigIdAndSeq> configList;
+    public String name;
+    public Protocol protocol;
+    public Category category;
+    public int durationInSec;
+    public int sequenceNumber;
 
 }

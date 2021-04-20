@@ -29,6 +29,24 @@ public interface ConfiguratorServiceFeignClient {
     void removeConfig(@PathVariable("id") String id);
 
     @PostMapping("/configurator/configs/ids")
-    List<ComplexConfigResponse> getConfigsByIds(@RequestBody GetConfigsByIdsRequest request);
+    List<ComplexConfigElement> getConfigsByIds(@RequestBody GetConfigsByIdsRequest request);
+
+    @GetMapping("/configurator/complex/configs/{complexId}")
+    ComplexConfigResponse getComplexConfig(@PathVariable("complexId") String complexId);
+
+    @GetMapping("/configurator/complex/configs")
+    List<ComplexConfigResponse> getAllComplexConfigs();
+
+    @PostMapping("/configurator/complex/configs")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void createComplexConfig(@RequestBody CreateComplexConfigRequest request);
+
+    @PutMapping("/configurator/complex/configs")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void updateComplexConfig(@RequestBody UpdateComplexConfigRequest request);
+
+    @DeleteMapping("/configurator/complex/configs/{complexId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void removeComplexConfig(@PathVariable("complexId") String complexId);
 
 }

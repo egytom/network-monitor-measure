@@ -1,15 +1,16 @@
 package aut.bme.hu.configurator.core.integration;
 
 import aut.bme.hu.configurator.api.message.Category;
+import aut.bme.hu.configurator.api.message.ComplexConfigIdAndSeq;
+import aut.bme.hu.configurator.api.message.ComplexConfigResponse;
 import aut.bme.hu.configurator.api.message.Protocol;
 import aut.bme.hu.configurator.core.TestBase;
 import aut.bme.hu.configurator.core.config.ProtocolConfig;
-import aut.bme.hu.configurator.core.dto.ComplexConfigResult;
-import aut.bme.hu.configurator.core.dto.CreateConfigMessage;
-import aut.bme.hu.configurator.core.dto.GetConfigsByIdsMessage;
-import aut.bme.hu.configurator.core.dto.UpdateConfigMessage;
+import aut.bme.hu.configurator.core.dto.*;
 import aut.bme.hu.configurator.core.mapper.ConfiguratorMapper;
+import aut.bme.hu.configurator.core.model.ComplexConfig;
 import aut.bme.hu.configurator.core.model.Config;
+import aut.bme.hu.configurator.core.repository.ComplexConfigRepository;
 import aut.bme.hu.configurator.core.repository.ConfigRepository;
 import aut.bme.hu.configurator.core.service.ConfiguratorService;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -38,7 +40,10 @@ public class ConfiguratorIntegrationTest extends TestBase {
     private ConfiguratorService service;
 
     @Autowired
-    private ConfigRepository repository;
+    private ConfigRepository configRepository;
+
+    @Autowired
+    private ComplexConfigRepository complexConfigRepository;
 
     @Autowired
     private ConfiguratorMapper mapper;
@@ -114,13 +119,62 @@ public class ConfiguratorIntegrationTest extends TestBase {
         assertTrue(resultList.stream().filter(r -> !ids.contains(r.getId())).findAny().isEmpty());
     }
 
+    @Test
+    void getComplexConfig() {
+        Config config = saveConfig();
+        ComplexConfig complexConfig = saveComplexConfig(List.of(config.getId()));
+
+        ComplexConfigResponse result = service.getComplexConfig(complexConfig.getId());
+
+        assertComplexConfig(result, complexConfig);
+    }
+
+    @Test
+    void createComplexConfig() {
+        Config config = saveConfig();
+        CreateComplexConfigMessage message = createCreateComplexConfigMessage(List.of(config.getId()));
+
+        service.createComplexConfig(message);
+
+        List<ComplexConfigResponse> resultList = service.getAllComplexConfigs();
+        assertNotNull(resultList);
+        assertEquals(message.getConfigList().size(), resultList.get(0).configList.size());
+        assertEquals(message.getConfigList().get(0).id, resultList.get(0).configList.get(0).id);
+        assertEquals(message.getConfigList().get(0).sequenceNumber, resultList.get(0).configList.get(0).sequenceNumber);
+    }
+
+    @Test
+    void removeComplexConfig() {
+        ComplexConfig complexConfig = saveComplexConfig(List.of());
+
+        service.removeComplexConfig(complexConfig.getId());
+
+        assertThrows(EntityNotFoundException.class, () -> service.getComplexConfig(complexConfig.getId()));
+    }
+
+    @Test
+    void updateComplexConfig() {
+        Config config = saveConfig();
+        ComplexConfig complexConfig = saveComplexConfig(List.of(config.getId(), config.getId()));
+        UpdateComplexConfigMessage message = createUpdateComplexConfigMessage(complexConfig.getId(), List.of(config.getId()));
+
+        service.updateComplexConfig(message);
+
+        List<ComplexConfigResponse> resultList = service.getAllComplexConfigs();
+        assertNotNull(resultList);
+        assertEquals(message.getComplexId(), resultList.get(0).id);
+        assertEquals(message.getConfigList().size(), resultList.get(0).configList.size());
+        assertEquals(message.getConfigList().get(0).id, resultList.get(0).configList.get(0).id);
+        assertEquals(message.getConfigList().get(0).sequenceNumber, resultList.get(0).configList.get(0).sequenceNumber);
+    }
+
     private Config saveConfig() {
         Config config = new Config();
         config.setName("name");
         config.setCategory(Category.DEFAULT);
         config.setProtocol(Protocol.HTTP);
         config.setDurationInSec(10);
-        return repository.save(config);
+        return configRepository.save(config);
     }
 
     private CreateConfigMessage createCreateConfigMessage() {
@@ -140,6 +194,37 @@ public class ConfiguratorIntegrationTest extends TestBase {
                 .protocol(Protocol.TCP)
                 .durationInSec(100)
                 .build();
+    }
+
+    private ComplexConfig saveComplexConfig(List<String> ids) {
+        ComplexConfig complexConfig = new ComplexConfig();
+        complexConfig.setConfigIds(ids);
+        return complexConfigRepository.save(complexConfig);
+    }
+
+    private CreateComplexConfigMessage createCreateComplexConfigMessage(List<String> configIds) {
+        List<ComplexConfigIdAndSeq> complexConfigIdAndSeqList = getComplexConfigIdAndSeqList(configIds);
+
+        return CreateComplexConfigMessage.builder()
+                .configList(complexConfigIdAndSeqList)
+                .build();
+    }
+
+    private UpdateComplexConfigMessage createUpdateComplexConfigMessage(String id, List<String> configIds) {
+        List<ComplexConfigIdAndSeq> complexConfigIdAndSeqList = getComplexConfigIdAndSeqList(configIds);
+
+        return UpdateComplexConfigMessage.builder()
+                .complexId(id)
+                .configList(complexConfigIdAndSeqList)
+                .build();
+    }
+
+    private List<ComplexConfigIdAndSeq> getComplexConfigIdAndSeqList(List<String> configIds) {
+        List<ComplexConfigIdAndSeq> complexConfigIdAndSeqList = new ArrayList<>();
+        for (int i = 1; i <= configIds.size(); i++) {
+            complexConfigIdAndSeqList.add(new ComplexConfigIdAndSeq(configIds.get(i - 1), i));
+        }
+        return complexConfigIdAndSeqList;
     }
 
     private void assertConfigAfterUpdate(Config result, UpdateConfigMessage message) {

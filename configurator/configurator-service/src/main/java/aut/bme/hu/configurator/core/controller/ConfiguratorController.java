@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -46,7 +47,7 @@ public class ConfiguratorController implements IConfiguratorController {
 
     @Override
     public void createConfig(CreateConfigRequest request) {
-        log.debug("-----> POST config request through /configurator/configs/");
+        log.debug("-----> POST Config request through /configurator/configs/");
         configuratorService.createConfig(configuratorMapper.toMessage(request));
     }
 
@@ -67,12 +68,50 @@ public class ConfiguratorController implements IConfiguratorController {
     }
 
     @Override
-    public List<ComplexConfigResponse> getConfigsByIds(GetConfigsByIdsRequest request) {
+    public List<ComplexConfigElement> getConfigsByIds(GetConfigsByIdsRequest request) {
         log.debug("-----> GET Configs by IDs request through /configurator/configs/ids");
         return configuratorService.getConfigsByIds(configuratorMapper.toMessage(request))
                 .stream()
                 .map(configuratorMapper::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ComplexConfigResponse getComplexConfig(@PathVariable String complexId) {
+        log.debug("-----> GET ComplexConfig request through /configurator/complex/configs/" + complexId);
+        try {
+            return configuratorService.getComplexConfig(complexId);
+        } catch (EntityNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ComplexConfig not found.");
+        }
+    }
+
+    @Override
+    public List<ComplexConfigResponse> getAllComplexConfigs() {
+        log.debug("-----> GET all ComplexConfig request through /configurator/complex/configs/");
+        return configuratorService.getAllComplexConfigs();
+    }
+
+    @Override
+    public void createComplexConfig(CreateComplexConfigRequest request) {
+        log.debug("-----> POST ComplexConfig request through /configurator/complex/configs/");
+        configuratorService.createComplexConfig(configuratorMapper.toMessage(request));
+    }
+
+    @Override
+    public void updateComplexConfig(UpdateComplexConfigRequest request) {
+        log.debug("-----> PUT ComplexConfig request through /configurator/complex/configs/");
+        try {
+            configuratorService.updateComplexConfig(configuratorMapper.toMessage(request));
+        } catch (EntityNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Config not found.");
+        }
+    }
+
+    @Override
+    public void removeComplexConfig(String complexId) {
+        log.debug("-----> DELETE ComplexConfig request through /configurator/complex/configs/");
+        configuratorService.removeComplexConfig(complexId);
     }
 
 }
