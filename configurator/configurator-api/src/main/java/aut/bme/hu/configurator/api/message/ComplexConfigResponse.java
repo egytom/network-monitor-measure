@@ -12,6 +12,7 @@ import java.util.List;
 public class ComplexConfigResponse {
 
     public String id;
+    public String name;
     public List<ComplexConfigIdAndSeq> configList;
 
 }

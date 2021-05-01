@@ -36,6 +36,7 @@ public class TestBase {
 
     protected void assertComplexConfig(ComplexConfigResponse result, ComplexConfig complexConfig) {
         assertEquals(result.id, complexConfig.getId());
+        assertEquals(result.name, complexConfig.getName());
         assertEquals(result.configList.size(), complexConfig.getConfigIds().size());
         for (int i = 0; i < result.configList.size() && i < complexConfig.getConfigIds().size(); i++) {
             assertEquals(result.configList.get(i).id, complexConfig.getConfigIds().get(i));

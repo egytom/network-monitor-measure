@@ -43,7 +43,7 @@ class ConfiguratorServiceTest extends TestBase {
     }
 
     @Test
-    void getConfig_EntityFound() {
+    void getConfig() {
         Config config = createConfig("1");
         when(configRepository.findById(anyString())).thenReturn(Optional.of(config));
 
@@ -81,7 +81,7 @@ class ConfiguratorServiceTest extends TestBase {
     }
 
     @Test
-    void getComplexConfig_EntityFound() {
+    void getComplexConfig() {
         ComplexConfig complexConfig = createComplexConfig("id", List.of("1"));
         when(complexConfigRepository.findById(anyString())).thenReturn(Optional.of(complexConfig));
         when(complexConfigRepository.save(any())).thenReturn(complexConfig);
@@ -119,6 +119,7 @@ class ConfiguratorServiceTest extends TestBase {
     private ComplexConfig createComplexConfig(String id, List<String> ids) {
         return ComplexConfig.builder()
                 .id(id)
+                .name("name")
                 .configIds(ids)
                 .build();
     }

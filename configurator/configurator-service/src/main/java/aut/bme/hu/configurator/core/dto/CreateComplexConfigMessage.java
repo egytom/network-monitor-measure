@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateComplexConfigMessage {
 
+    private String name;
     private List<ComplexConfigIdAndSeq> configList;
 
 }

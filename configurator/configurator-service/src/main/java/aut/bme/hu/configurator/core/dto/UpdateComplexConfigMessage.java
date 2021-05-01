@@ -13,6 +13,7 @@ import java.util.List;
 public class UpdateComplexConfigMessage {
 
     private String complexId;
+    private String name;
     private List<ComplexConfigIdAndSeq> configList;
 
 }

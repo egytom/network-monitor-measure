@@ -92,6 +92,7 @@ public class ConfiguratorService {
         List<String> complexConfigIdList = getConfigIdListFromComplexConfigIdAndSeq(message.getConfigList());
 
         ComplexConfig complexConfig = new ComplexConfig();
+        complexConfig.setName(message.getName());
         complexConfig.setConfigIds(complexConfigIdList);
         complexConfigRepository.save(complexConfig);
     }
@@ -103,6 +104,7 @@ public class ConfiguratorService {
 
         List<String> complexConfigIdList = getConfigIdListFromComplexConfigIdAndSeq(message.getConfigList());
 
+        complexConfigToUpdate.setName(message.getName());
         complexConfigToUpdate.setConfigIds(complexConfigIdList);
         complexConfigRepository.save(complexConfigToUpdate);
     }
@@ -189,6 +191,7 @@ public class ConfiguratorService {
 
         return ComplexConfigResponse.builder()
                 .id(complexConfig.getId())
+                .name(complexConfig.getName())
                 .configList(complexConfigIdAndSeqList)
                 .build();
     }

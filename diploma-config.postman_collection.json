@@ -112,7 +112,7 @@
 		{
 			"name": "getComplexConfig",
 			"request": {
-				"url": "localhost:8080/configurator/complex/configs/bb05d996-4f6b-4538-a483-eccfdd78e9c1",
+				"url": "localhost:8080/configurator/complex/configs/4e908d8f-5072-40e1-a403-76c575edf098",
 				"method": "GET",
 				"header": [],
 				"body": {},
@@ -145,7 +145,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"configList\": [\n\t\t{\n\t\t\t\"id\": \"ae898ad3-e749-4760-9f68-8eb7b2769bd7\",\n\t\t\t\"sequenceNumber\": 1\n\t\t},\t\n\t\t{\n\t\t\t\"id\": \"2ea47059-e22f-40de-9681-c566e455fdfd\",\n\t\t\t\"sequenceNumber\": 2\n\t\t}\n\t]\n}"
+					"raw": "{\n\t\"name\":\"complex-config\",\n\t\"configList\": [\n\t\t{\n\t\t\t\"id\": \"ae898ad3-e749-4760-9f68-8eb7b2769bd7\",\n\t\t\t\"sequenceNumber\": 1\n\t\t},\t\n\t\t{\n\t\t\t\"id\": \"2ea47059-e22f-40de-9681-c566e455fdfd\",\n\t\t\t\"sequenceNumber\": 2\n\t\t}\n\t]\n}"
 				},
 				"description": ""
 			},
@@ -165,7 +165,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"complexId\": \"bb05d996-4f6b-4538-a483-eccfdd78e9c1\",\n    \"configList\": [\n        {\n            \"id\": \"ae898ad3-e749-4760-9f68-8eb7b2769bd7\",\n            \"sequenceNumber\": 1\n        },\n        {\n            \"id\": \"ae898ad3-e749-4760-9f68-8eb7b2769bd7\",\n            \"sequenceNumber\": 2\n        }\n    ]\n}"
+					"raw": "{\n    \"complexId\": \"4e908d8f-5072-40e1-a403-76c575edf098\",\n    \"name\": \"updated-name\",\n    \"configList\": [\n        {\n            \"id\": \"ae898ad3-e749-4760-9f68-8eb7b2769bd7\",\n            \"sequenceNumber\": 1\n        },\n        {\n            \"id\": \"ae898ad3-e749-4760-9f68-8eb7b2769bd7\",\n            \"sequenceNumber\": 2\n        }\n    ]\n}"
 				},
 				"description": ""
 			},
@@ -174,7 +174,7 @@
 		{
 			"name": "removeComplexConfig",
 			"request": {
-				"url": "localhost:8080/configurator/complex/configs/bb05d996-4f6b-4538-a483-eccfdd78e9c1",
+				"url": "localhost:8080/configurator/complex/configs/4e908d8f-5072-40e1-a403-76c575edf098",
 				"method": "DELETE",
 				"header": [],
 				"body": {},

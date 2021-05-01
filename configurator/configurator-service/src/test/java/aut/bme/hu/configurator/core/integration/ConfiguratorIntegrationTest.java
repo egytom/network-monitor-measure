@@ -198,6 +198,7 @@ public class ConfiguratorIntegrationTest extends TestBase {
 
     private ComplexConfig saveComplexConfig(List<String> ids) {
         ComplexConfig complexConfig = new ComplexConfig();
+        complexConfig.setName("name");
         complexConfig.setConfigIds(ids);
         return complexConfigRepository.save(complexConfig);
     }
@@ -206,6 +207,7 @@ public class ConfiguratorIntegrationTest extends TestBase {
         List<ComplexConfigIdAndSeq> complexConfigIdAndSeqList = getComplexConfigIdAndSeqList(configIds);
 
         return CreateComplexConfigMessage.builder()
+                .name("name")
                 .configList(complexConfigIdAndSeqList)
                 .build();
     }
@@ -215,6 +217,7 @@ public class ConfiguratorIntegrationTest extends TestBase {
 
         return UpdateComplexConfigMessage.builder()
                 .complexId(id)
+                .name("name")
                 .configList(complexConfigIdAndSeqList)
                 .build();
     }
