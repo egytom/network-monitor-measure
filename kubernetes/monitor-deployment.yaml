@@ -28,7 +28,7 @@ spec:
             - name: JAVA_OPTS
               value: ' -DEUREKA_SERVER=http://discovery:8761/eureka -Dspring.profiles.active=prod -Deureka.instance.preferIpAddress=true'
           image: egytom/networkmonitor-monitor:0.1
-          imagePullPolicy: ""
+          imagePullPolicy: Always
           name: monitor
           resources: { }
       restartPolicy: Always

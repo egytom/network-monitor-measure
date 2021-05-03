@@ -32,7 +32,7 @@ spec:
             - name: POSTGRES_USERNAME
               value: postgres
           image: egytom/networkmonitor-configurator-db:0.1
-          imagePullPolicy: ""
+          imagePullPolicy: Always
           name: configuratordb
           ports:
             - containerPort: 5432
