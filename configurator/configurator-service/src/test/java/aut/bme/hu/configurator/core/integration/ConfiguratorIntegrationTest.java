@@ -1,18 +1,17 @@
 package aut.bme.hu.configurator.core.integration;
 
-import aut.bme.hu.configurator.api.message.Category;
-import aut.bme.hu.configurator.api.message.ComplexConfigIdAndSeq;
-import aut.bme.hu.configurator.api.message.ComplexConfigResponse;
-import aut.bme.hu.configurator.api.message.Protocol;
+import aut.bme.hu.configurator.api.message.*;
 import aut.bme.hu.configurator.core.TestBase;
 import aut.bme.hu.configurator.core.config.ProtocolConfig;
-import aut.bme.hu.configurator.core.dto.*;
+import aut.bme.hu.configurator.core.controller.ConfiguratorController;
+import aut.bme.hu.configurator.core.dto.ComplexConfigResult;
+import aut.bme.hu.configurator.core.dto.UpdateConfigMessage;
 import aut.bme.hu.configurator.core.mapper.ConfiguratorMapper;
 import aut.bme.hu.configurator.core.model.ComplexConfig;
 import aut.bme.hu.configurator.core.model.Config;
 import aut.bme.hu.configurator.core.repository.ComplexConfigRepository;
 import aut.bme.hu.configurator.core.repository.ConfigRepository;
-import aut.bme.hu.configurator.core.service.ConfiguratorService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +19,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
@@ -37,7 +36,7 @@ public class ConfiguratorIntegrationTest extends TestBase {
     private ProtocolConfig protocolConfig;
 
     @Autowired
-    private ConfiguratorService service;
+    private ConfiguratorController controller;
 
     @Autowired
     private ConfigRepository configRepository;
@@ -52,20 +51,22 @@ public class ConfiguratorIntegrationTest extends TestBase {
     void getConfig() {
         Config config = saveConfig();
 
-        Config result = service.getConfig(config.getId());
+        ConfigResponse response = controller.getConfig(config.getId());
 
-        assertConfig(result, config);
+        assertConfig(toConfig(response), config);
     }
 
     @Test
     void createConfig() {
-        CreateConfigMessage message = createCreateConfigMessage();
+        CreateConfigRequest request = createCreateConfigRequest();
 
-        service.createConfig(message);
+        controller.createConfig(request);
 
-        List<Config> resultList = service.getAllConfigs();
-        assertNotNull(resultList);
-        Config config = mapper.toConfig(message);
+        List<ConfigResponse> responseList = controller.getAllConfigs();
+
+        List<Config> resultList = responseList.stream().map(this::toConfig).collect(Collectors.toList());
+        Assertions.assertNotNull(resultList);
+        Config config = mapper.toConfig(mapper.toMessage(request));
         config.setId(resultList.get(0).getId());
         assertConfig(resultList.get(0), config);
     }
@@ -74,9 +75,9 @@ public class ConfiguratorIntegrationTest extends TestBase {
     void removeConfig() {
         Config config = saveConfig();
 
-        service.removeConfig(config.getId());
+        controller.removeConfig(config.getId());
 
-        assertThrows(EntityNotFoundException.class, () -> service.getConfig(config.getId()));
+        assertThrows(ResponseStatusException.class, () -> controller.getConfig(config.getId()));
     }
 
     @Test
@@ -86,8 +87,9 @@ public class ConfiguratorIntegrationTest extends TestBase {
         Config config3 = saveConfig();
         List<Config> configList = List.of(config1, config2, config3);
 
-        List<Config> resultList = service.getAllConfigs();
+        List<ConfigResponse> responseList = controller.getAllConfigs();
 
+        List<Config> resultList = responseList.stream().map(this::toConfig).collect(Collectors.toList());
         for (int i = 0; i < resultList.size() && i < configList.size(); i++) {
             assertConfig(resultList.get(i), configList.get(i));
         }
@@ -96,12 +98,12 @@ public class ConfiguratorIntegrationTest extends TestBase {
     @Test
     void updateConfig() {
         Config config = saveConfig();
-        UpdateConfigMessage message = createUpdateConfigMessage(config.getId());
+        UpdateConfigRequest request = createUpdateConfigRequest(config.getId());
 
-        service.updateConfig(message);
-        Config result = service.getConfig(config.getId());
+        controller.updateConfig(request);
+        ConfigResponse response = controller.getConfig(config.getId());
 
-        assertConfigAfterUpdate(result, message);
+        assertConfigAfterUpdate(toConfig(response), mapper.toMessage(request));
     }
 
     @Test
@@ -111,12 +113,13 @@ public class ConfiguratorIntegrationTest extends TestBase {
         Config configNotNeeded = saveConfig();
         List<Config> configList = List.of(config1, config2);
         List<String> ids = List.of(config1.getId(), config2.getId());
-        GetConfigsByIdsMessage message = GetConfigsByIdsMessage.builder().ids(ids).build();
+        GetConfigsByIdsRequest request = GetConfigsByIdsRequest.builder().ids(ids).build();
 
-        List<ComplexConfigResult> resultList = service.getConfigsByIds(message);
+        List<ComplexConfigElement> responseList = controller.getConfigsByIds(request);
 
+        List<ComplexConfigResult> resultList = responseList.stream().map(this::toResult).collect(Collectors.toList());
         assertComplexResult(resultList, configList);
-        assertTrue(resultList.stream().filter(r -> !ids.contains(r.getId())).findAny().isEmpty());
+        Assertions.assertTrue(resultList.stream().filter(r -> !ids.contains(r.getId())).findAny().isEmpty());
     }
 
     @Test
@@ -124,7 +127,7 @@ public class ConfiguratorIntegrationTest extends TestBase {
         Config config = saveConfig();
         ComplexConfig complexConfig = saveComplexConfig(List.of(config.getId()));
 
-        ComplexConfigResponse result = service.getComplexConfig(complexConfig.getId());
+        ComplexConfigResponse result = controller.getComplexConfig(complexConfig.getId());
 
         assertComplexConfig(result, complexConfig);
     }
@@ -132,40 +135,40 @@ public class ConfiguratorIntegrationTest extends TestBase {
     @Test
     void createComplexConfig() {
         Config config = saveConfig();
-        CreateComplexConfigMessage message = createCreateComplexConfigMessage(List.of(config.getId()));
+        CreateComplexConfigRequest request = createCreateComplexConfigRequest(List.of(config.getId()));
 
-        service.createComplexConfig(message);
+        controller.createComplexConfig(request);
 
-        List<ComplexConfigResponse> resultList = service.getAllComplexConfigs();
-        assertNotNull(resultList);
-        assertEquals(message.getConfigList().size(), resultList.get(0).configList.size());
-        assertEquals(message.getConfigList().get(0).id, resultList.get(0).configList.get(0).id);
-        assertEquals(message.getConfigList().get(0).sequenceNumber, resultList.get(0).configList.get(0).sequenceNumber);
+        List<ComplexConfigResponse> resultList = controller.getAllComplexConfigs();
+        Assertions.assertNotNull(resultList);
+        Assertions.assertEquals(request.configList.size(), resultList.get(0).configList.size());
+        Assertions.assertEquals(request.configList.get(0).id, resultList.get(0).configList.get(0).id);
+        Assertions.assertEquals(request.configList.get(0).sequenceNumber, resultList.get(0).configList.get(0).sequenceNumber);
     }
 
     @Test
     void removeComplexConfig() {
         ComplexConfig complexConfig = saveComplexConfig(List.of());
 
-        service.removeComplexConfig(complexConfig.getId());
+        controller.removeComplexConfig(complexConfig.getId());
 
-        assertThrows(EntityNotFoundException.class, () -> service.getComplexConfig(complexConfig.getId()));
+        assertThrows(ResponseStatusException.class, () -> controller.getComplexConfig(complexConfig.getId()));
     }
 
     @Test
     void updateComplexConfig() {
         Config config = saveConfig();
         ComplexConfig complexConfig = saveComplexConfig(List.of(config.getId(), config.getId()));
-        UpdateComplexConfigMessage message = createUpdateComplexConfigMessage(complexConfig.getId(), List.of(config.getId()));
+        UpdateComplexConfigRequest request = createUpdateComplexConfigRequest(complexConfig.getId(), List.of(config.getId()));
 
-        service.updateComplexConfig(message);
+        controller.updateComplexConfig(request);
 
-        List<ComplexConfigResponse> resultList = service.getAllComplexConfigs();
-        assertNotNull(resultList);
-        assertEquals(message.getComplexId(), resultList.get(0).id);
-        assertEquals(message.getConfigList().size(), resultList.get(0).configList.size());
-        assertEquals(message.getConfigList().get(0).id, resultList.get(0).configList.get(0).id);
-        assertEquals(message.getConfigList().get(0).sequenceNumber, resultList.get(0).configList.get(0).sequenceNumber);
+        List<ComplexConfigResponse> resultList = controller.getAllComplexConfigs();
+        Assertions.assertNotNull(resultList);
+        Assertions.assertEquals(request.complexId, resultList.get(0).id);
+        Assertions.assertEquals(request.configList.size(), resultList.get(0).configList.size());
+        Assertions.assertEquals(request.configList.get(0).id, resultList.get(0).configList.get(0).id);
+        Assertions.assertEquals(request.configList.get(0).sequenceNumber, resultList.get(0).configList.get(0).sequenceNumber);
     }
 
     private Config saveConfig() {
@@ -177,8 +180,8 @@ public class ConfiguratorIntegrationTest extends TestBase {
         return configRepository.save(config);
     }
 
-    private CreateConfigMessage createCreateConfigMessage() {
-        return CreateConfigMessage.builder()
+    private CreateConfigRequest createCreateConfigRequest() {
+        return CreateConfigRequest.builder()
                 .name("name")
                 .category(Category.DEFAULT)
                 .protocol(Protocol.HTTP)
@@ -186,8 +189,8 @@ public class ConfiguratorIntegrationTest extends TestBase {
                 .build();
     }
 
-    private UpdateConfigMessage createUpdateConfigMessage(String id) {
-        return UpdateConfigMessage.builder()
+    private UpdateConfigRequest createUpdateConfigRequest(String id) {
+        return UpdateConfigRequest.builder()
                 .id(id)
                 .name("updated_name")
                 .category(Category.DEFAULT)
@@ -203,19 +206,19 @@ public class ConfiguratorIntegrationTest extends TestBase {
         return complexConfigRepository.save(complexConfig);
     }
 
-    private CreateComplexConfigMessage createCreateComplexConfigMessage(List<String> configIds) {
+    private CreateComplexConfigRequest createCreateComplexConfigRequest(List<String> configIds) {
         List<ComplexConfigIdAndSeq> complexConfigIdAndSeqList = getComplexConfigIdAndSeqList(configIds);
 
-        return CreateComplexConfigMessage.builder()
+        return CreateComplexConfigRequest.builder()
                 .name("name")
                 .configList(complexConfigIdAndSeqList)
                 .build();
     }
 
-    private UpdateComplexConfigMessage createUpdateComplexConfigMessage(String id, List<String> configIds) {
+    private UpdateComplexConfigRequest createUpdateComplexConfigRequest(String id, List<String> configIds) {
         List<ComplexConfigIdAndSeq> complexConfigIdAndSeqList = getComplexConfigIdAndSeqList(configIds);
 
-        return UpdateComplexConfigMessage.builder()
+        return UpdateComplexConfigRequest.builder()
                 .complexId(id)
                 .name("name")
                 .configList(complexConfigIdAndSeqList)
@@ -231,11 +234,44 @@ public class ConfiguratorIntegrationTest extends TestBase {
     }
 
     private void assertConfigAfterUpdate(Config result, UpdateConfigMessage message) {
-        assertEquals(result.getId(), message.getId());
-        assertEquals(result.getName(), message.getName());
-        assertEquals(result.getCategory(), message.getCategory());
-        assertEquals(result.getDurationInSec(), message.getDurationInSec());
-        assertEquals(result.getProtocol(), message.getProtocol());
+        Assertions.assertEquals(result.getId(), message.getId());
+        Assertions.assertEquals(result.getName(), message.getName());
+        Assertions.assertEquals(result.getCategory(), message.getCategory());
+        Assertions.assertEquals(result.getDurationInSec(), message.getDurationInSec());
+        Assertions.assertEquals(result.getProtocol(), message.getProtocol());
+    }
+
+    private Config toConfig(ConfigResponse configResponse) {
+        if (configResponse == null) {
+            return null;
+        }
+
+        Config.ConfigBuilder configBuilder = Config.builder();
+
+        configBuilder.id(configResponse.id);
+        configBuilder.name(configResponse.name);
+        configBuilder.protocol(configResponse.protocol);
+        configBuilder.category(configResponse.category);
+        configBuilder.durationInSec(configResponse.durationInSec);
+
+        return configBuilder.build();
+    }
+
+    private ComplexConfigResult toResult(ComplexConfigElement element) {
+        if (element == null) {
+            return null;
+        }
+
+        ComplexConfigResult.ComplexConfigResultBuilder complexConfigResult = ComplexConfigResult.builder();
+
+        complexConfigResult.id(element.id);
+        complexConfigResult.name(element.name);
+        complexConfigResult.protocol(element.protocol);
+        complexConfigResult.category(element.category);
+        complexConfigResult.durationInSec(element.durationInSec);
+        complexConfigResult.sequenceNumber(element.sequenceNumber);
+
+        return complexConfigResult.build();
     }
 
 }
