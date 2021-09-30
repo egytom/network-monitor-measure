@@ -31,13 +31,21 @@ spec:
               value: configuratordb
             - name: POSTGRES_USERNAME
               value: postgres
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           image: egytom/networkmonitor-configurator-db:0.1
           imagePullPolicy: Always
           name: configuratordb
           ports:
             - containerPort: 5432
+          volumeMounts:
+            - name: postgres-pv-claim
+              mountPath: "/var/lib/postgresql/data"
           resources: { }
       restartPolicy: Always
       serviceAccountName: ""
-      volumes: null
+      volumes:
+        - name: postgres-pv-claim
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
 status: { }
